@@ -1,14 +1,16 @@
 package frc.robot.Subsystems.Arm;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Subsystems.Arm.ArmStates.ArmPositions;
-import frc.robot.Subsystems.Arm.ArmStates.ArmState;
+import frc.robot.Subsystems.Arm.ArmState.ArmPositions;
+import frc.robot.Subsystems.Arm.ArmState.ArmStates;
 import frc.robot.Subsystems.Arm.Elevator.Elevator;
 import frc.robot.Subsystems.Arm.Wrist.Wrist;
 
 public class Arm extends SubsystemBase{
-    public ArmState armState = ArmState.IDLE;
-    public ArmState wantedArmState = ArmState.IDLE;
+    public ArmStates currentArmState = ArmStates.IDLE;
+    public ArmStates wantedArmState = ArmStates.IDLE;
     public ArmPositions wantedPosition = ArmPositions.SAFE;
     private Elevator elevator = Elevator.GetInstance();
     private Wrist wrist = Wrist.getInstance();
@@ -19,106 +21,29 @@ public class Arm extends SubsystemBase{
 
     @Override
     public void periodic() {
-        //Logger.processInputs();
+        // #1 Logging
+        Logger.processInputs();
 
+        // #2 Handling Wanted State
         handleStateTransitions(null);
 
         HandleElevatorTrapazoidal();
+
+        // #3 Applying desired state
+        applyStates();
     }
     
     public void handleStateTransitions() {
-        if(this.wantedArmState == ArmState.MANUAL){
-            this.armState = ArmState.MANUAL;
+        if(this.wantedArmState == ArmStates.MANUAL){
+            this.currentArmState = ArmStates.MANUAL;
+        }else if(this.currentArmState == ArmStates.IDLE){ //if current position is not equal to wanted position
+            //set state to "moving"
+            //else, set state to idle
+        }else if(this.currentArmState == ArmStates.IDLE){
+
         }
-        else{
-            switch(this.wantedPosition){
-                case L1:
-                    if(true){//have coral 
-                    //wrist in l1
-                    //elevator l1
-                    
-                    }
-                    break;
-                case L2:
-                    if(true){//have coral
-                    //wrist in l2
-                    //elevator l2
-                    }
-                    break;
-                case L3:
-                    if(true){//have coral
-                    //wrist in l3
-                    //elevator l3
-                    }
-                    break;
-                case L4:
-                    if(true){//have coral
-                    //wrist in l4
-                    //elevator l4
-
-                    }
-                    break;
-                case SAFE:
-                    if(true){
-                        //wrist all the way up
-                        //elevator down
-                    }
-                    break;
-                case INTAKECORAL:
-                    if(true){//no coral no algea elevator down
-                        //wrist in
-                    }
-                    break;
-                case REEFALGAELOW:
-                    if(true){//no coral no algea
-                    //low algae
-                    //elevator to low algae
-                    }
-                    break;
-                case REEFALGAEHIGH:
-                    if(true){//no coral no algae
-                    //wrist to high algae
-                    //elevator to high algae
-
-                    }
-                    break;
-                case BARGE:
-                    if(true){//has algae 
-                    //elevator to net
-                    //wrist to net
-                    }
-                    break;
-                case PROCESSOR:
-                    if(true){//have algae
-                    //wrist processor
-                    //elevator down
-                    }
-                    break;
-                case LOLLIPOP:
-                    if(true){// no game piece
-                    //elevator to right level   
-                    //wrist to lollipop 
-                    }
-                case GROUNDALGAE:
-                    if(true){//no game piece
-                        //elevator down
-                        //wrist ground algae
-                    }
-                case SUPERCYCLEALGAEHIGH:
-                    if(true){//supercycling high
-                    //make it like be in the right spot
-
-                    }
-                    break;
-                case SUPERCYCLEALGAELOW:
-                    if(true){//supercycling low
-                    //make it like be in the right spot
-                    }
-                    break;
-                default:
-                    this.wantedArmState = ArmState.IDLE;                
-            }   
-        }
+            
+        
     }
         
 
@@ -131,14 +56,14 @@ public class Arm extends SubsystemBase{
         return this.elevator.GetInstance().io.GetPosition();
     }
     public void SetElevatorWantedPosition() {
-        this.elevator.GetInstance().SetPosition(this.armState.elevatorPosition);
+        this.elevator.GetInstance().SetPosition(this.currentArmState.elevatorPosition);
     }
 
 
 
     public boolean stateInTolerance (double tolerance) {
-        //ArmState current_arm_state = getCurrent
-        //ArmState 
+        //ArmStates current_arm_state = getCurrent
+        //ArmStates 
         
         //double t1=0;
         //dob
@@ -154,7 +79,7 @@ public class Arm extends SubsystemBase{
 
 
     public void applyStates(){
-        switch(this.armState) {
+        switch(this.ArmStates) {
             case MOVING:
          
                 this.SetPosition(this.wantedPosition);

@@ -1,7 +1,7 @@
-package frc.robot.Subsystems.Arm.ArmStates;
+package frc.robot.Subsystems.Arm.ArmState;
 
-public class ArmStates{
-    public enum ArmState {
+public class ArmState{
+    public enum ArmStates {
         IDLE,
         MOVING,
         MANUAL
@@ -14,15 +14,15 @@ public class ArmStates{
         L3(1, 1),
         L4(1, 1),
         SAFE(1, 1),
-        INTAKECORAL(1, 1),
+        INTAKE_CORAL(1, 1),
         BARGE(1, 1),
         PROCESSOR(1, 1),
-        GROUNDALGAE(1, 1),
+        GROUND_ALGAE(1, 1),
         LOLLIPOP(1, 1),
-        REEFALGAEHIGH(1, 1),
-        REEFALGAELOW(1, 1),
-        SUPERCYCLEALGAEHIGH(1, 1),
-        SUPERCYCLEALGAELOW(1, 1);
+        REEF_ALGAE_HIGH(1, 1),
+        REEF_ALGAE_LOW(1, 1),
+        SUPERCYCLE_ALGAE_HIGH(1, 1),
+        SUPERCYCLE_ALGAE_LOW(1, 1);
 
         public final float elevatorPosition;
         public final float wristPosition;
@@ -34,16 +34,12 @@ public class ArmStates{
     }
         
         
-    private ArmState current_arm_state = ArmState.IDLE;
+    private ArmStates current_arm_state = ArmStates.IDLE;
     private ArmPositions desired_arm_position = ArmPositions.SAFE;
 
     public ArmPositions getDesiredArmPosition () {
         return desired_arm_position;
-    }
-    
-    
-
-    
+    }   
 }
 
 
