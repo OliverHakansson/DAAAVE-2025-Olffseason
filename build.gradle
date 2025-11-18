@@ -1,6 +1,25 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2025.3.2"
+    id 'com.diffplug.spotless' version '6.25.0'
+}
+
+spotless {
+    java {
+        googleJavaFormat() // braces on same line
+
+        // No space before parentheses
+        replaceRegex('No space before parentheses', '([A-Za-z0-9_])\\s+\\(', '$1(')
+
+        // Classes must be PascalCase
+        replaceRegex('Classes must be PascalCase', '\\bclass\\s+[a-z][A-Za-z0-9_]*', 'INVALID_CLASS')
+
+        // Methods must be camelCase
+        replaceRegex('Methods must be camelCase', '(?:public|private|protected)?\\s*(?:static\\s+)?[A-Za-z0-9_<>\\[\\]]+\\s+[A-Z][A-Za-z0-9]*\\s*\\(', 'INVALID_METHOD')
+
+        // Members/variables must be camelCase
+        replaceRegex('Members must be camelCase', '\\b[A-Za-z0-9_<>\\[\\]]+\\s+[A-Z][A-Za-z0-9]*\\s*(=|;)', 'INVALID_MEMBER')
+    }
 }
 
 java {
@@ -10,31 +29,19 @@ java {
 
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
-// Define my targets (RoboRIO) and artifacts (deployable files)
-// This is added by GradleRIO's backing project DeployUtils.
 deploy {
     targets {
         roborio(getTargetTypeClass('RoboRIO')) {
-            // Team number is loaded either from the .wpilib/wpilib_preferences.json
-            // or from command line. If not found an exception will be thrown.
-            // You can use getTeamOrDefault(team) instead of getTeamNumber if you
-            // want to store a team number in this file.
             team = project.frc.getTeamNumber()
             debug = project.frc.getDebugOrDefault(false)
 
             artifacts {
-                // First part is artifact name, 2nd is artifact type
-                // getTargetTypeClass is a shortcut to get the class type using a string
+                frcJava(getArtifactTypeClass('FRCJavaArtifact')) {}
 
-                frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
-                }
-
-                // Static files artifact
                 frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
                     files = project.fileTree('src/main/deploy')
                     directory = '/home/lvuser/deploy'
-                    deleteOldFiles = false // Change to true to delete files on roboRIO that no
-                                           // longer exist in deploy directory of this project
+                    deleteOldFiles = false
                 }
             }
         }
@@ -43,14 +50,9 @@ deploy {
 
 def deployArtifact = deploy.targets.roborio.artifacts.frcJava
 
-// Set to true to use debug for JNI.
 wpi.java.debugJni = false
-
-// Set this to true to enable desktop support.
 def includeDesktopSupport = true
 
-// Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
-// Also defines JUnit 5.
 dependencies {
     annotationProcessor wpi.java.deps.wpilibAnnotations()
     implementation wpi.java.deps.wpilib()
@@ -79,13 +81,9 @@ test {
     systemProperty 'junit.jupiter.extensions.autodetection.enabled', 'true'
 }
 
-// Simulation configuration (e.g. environment variables).
 wpi.sim.addGui().defaultEnabled = true
 wpi.sim.addDriverstation()
 
-// Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
-// in order to make them all available at runtime. Also adding the manifest so WPILib
-// knows where to look for our Robot Class.
 jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     from sourceSets.main.allSource
@@ -93,12 +91,10 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
-// Configure jar and deploy tasks
 deployArtifact.jarTask = jar
 wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
 
-// Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
 }

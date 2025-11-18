@@ -41,9 +41,7 @@ public class ArmStates{
         return desired_arm_position;
     }
     
-    public void ArmPositions setDesiredArmPosition (ArmPositions state) {
-        desired_arm_position=state;
-    }
+    
 
     
 }
