@@ -15,7 +15,7 @@ public class Superstructure extends SubsystemBase{
             case HOME:
                 break;    
             case PREPCLIMB:
-                //set elevater
+                //set elevaterc
                 //set wrist
                 //set servo
 
@@ -92,7 +92,6 @@ public class Superstructure extends SubsystemBase{
                 }else{
                     //holding algae
                     wantedState = States.HOLDALGAE;
-                }
                 }
              
                 break;
