@@ -22,8 +22,9 @@ public class Superstructure extends SubsystemBase{
 
 
 
-                if(true) // switches + stalled + elevator + wrist + servo
+                if(true){ // switches + stalled + elevator + wrist + servo
                     wantedState = States.PULLCLIMB;
+                }
                 break;   
             case PULLCLIMB:
                 //move elevator down
@@ -87,7 +88,7 @@ public class Superstructure extends SubsystemBase{
                 //move elevator down
                 //move wrist to ground algae
                 //start coral rollers
-                  if(true){   
+                if(true){   
                         //NOT HOLDING ALGAE
                 }else{
                     //holding algae
@@ -99,7 +100,7 @@ public class Superstructure extends SubsystemBase{
                 //move elevator down
                 //move wrist to ground algaee
                 //start coral rollers
-                     if(true){   
+                if(true){   
                         //NOT HOLDING ALGAE
                 }else{
                     //holding algae
@@ -151,107 +152,100 @@ public class Superstructure extends SubsystemBase{
 
     }
 
+
+
     public void handleStateTransitions(){
         switch (wantedState) {
-
-
-            case PREPCLIMB:
-            if(true){//elevator down
-                
-            };
-
-
-
-            case PULLCLIMB:
-                
-
             case L1:
-               if(true){ //have coral
+                if(true){ //have coral
                //elevator to L1
                //align
-               wantedState = States.SCORE
-               else if(true){//wants to score on L2
+                   wantedState = States.SCORE;
+                } else if(true){//wants to score on L2
                //align
-                wantedState = States.L2 
-               }
-                else if(true){//wants to score on L3
+                    wantedState = States.L2;
+                } else if(true){//wants to score on L3
                 //align
-                wantedState = States.L3 
-               }
-                else if(true){//wants to score on L4
+                    wantedState = States.L3;
+                } else if(true){//wants to score on L4
                 //align
-                wantedState = States.L4 
-               }else{ //not scoring
-                wantedState = States.HOLDCORAL
-               }
-                }  
-                break;      
+                    wantedState = States.L4;
+                } else{ //not scoring
+                    wantedState = States.HOLDCORAL;
+                }
+                break;  
+
             case L2:
                 if(true){ //have coral
                //elevator to L2
                //align
-               wantedState = States.SCORE
-               else if(true){//wants to score on L1
+                    wantedState = States.SCORE;
+                } else if(true){//wants to score on L1
                //align
-                wantedState = States.L1 
-               }
-                else if(true){//wants to score on L3
+                    wantedState = States.L1; 
+                } else if(true){//wants to score on L3
                 //align
-                wantedState = States.L3 
-               }
-                else if(true){//wants to score on L4
-                //align
-                wantedState = States.L4 
-               }else{ //not scoring
-                wantedState = States.HOLDCORAL
-               }
+                    wantedState = States.L3;
+                } else if(true){//wants to score on L4
+                    //align
+                    wantedState = States.L4;
+                } else{ //not scoring
+                    wantedState = States.HOLDCORAL;
+                }
                 break;
+
             case L3:
                 if(true){ //have coral
-               //elevator to L3
-               //align
-               wantedState = States.SCORE
-               else if(true){//wants to score on L2
-               //align
-                wantedState = States.L2 
-               }
-                else if(true){//wants to score on L1
-                //align
-                wantedState = States.L1 
-               }
-                else if(true){//wants to score on L4
-                //align
-                wantedState = States.L4 
-               }else{ //not scoring
-                wantedState = States.HOLDCORAL
-               }
-                }
-                break;        
+                    //elevator to L3
+                    //align
+                    wantedState = States.SCORE;
+                } else if(true){//wants to score on L2
+                    //align
+                    wantedState = States.L2;
+                } else if(true){
+                    //wants to score on L1
+                    //align
+                    wantedState = States.L1;
+                } else if(true){
+                    //wants to score on L4
+                    //align
+                     wantedState = States.L4;
+                } else{
+                     //not scoring
+                    wantedState = States.HOLDCORAL;
+                }    
+                
+                break;  
+
             case L4:
-                if(true){ //have coral
-               //elevator to L4
-               //align
-               wantedState = States.SCORE
-               else if(true){//wants to score on L2
-               //align
-                wantedState = States.L2 
-               }
-                else if(true){//wants to score on L3
-                //align
-                wantedState = States.L3 
-               }
-                else if(true){//wants to score on L1
-                //align
-                wantedState = States.L1 
-               }else{ //not scoring
-                wantedState = States.HOLDCORAL
-               }
+                if(true){ 
+                    //have coral
+                    //elevator to L4
+                    //align
+                    wantedState = States.SCORE;
+                } else if(true){
+                    //wants to score on L2
+                    //align
+                    wantedState = States.L2;
+                } else if(true){
+                    //wants to score on L3
+                    //align
+                    wantedState = States.L3;
+                } else if(true){
+                    //wants to score on L1
+                    //align
+                    wantedState = States.L1; 
+                } else{ 
+                    //not scoring
+                    wantedState = States.HOLDCORAL;
+                }
                
 
-                }
+                
                 //if hascoral is true and state != PREPCLIMB || state != PULLCLIMB
                     //setstate = L4
                 break;   
+
             case HOLDCORAL:
                 //set state to holdcoral
                 if(true){
@@ -260,88 +254,85 @@ public class Superstructure extends SubsystemBase{
                     //needs driver input goto L1
                 } else if(true){
                     //needs driver input goto L2
-                }else if(true){
+                } else if(true){
                     //needs driver input goto L3
-                }else if(true){
+                } else if(true){
                     //needs driver input goto L4
                 };
                 break;
+
             case CORALINTAKE:
                 //set state to CORALINTAKE
+                //if (wantedState == ElevatorStates.LEVEL3 || wantedState == ElevatorStates.LEVEL2 && wantedState ==CoralRollersState.OUTPUT){
+                //    wantedState = States.CORALINTAKE;
+               // }
                 break;   
+
             case SCORE:
                 //setstate to score
                 break;
+
             case REVERSE:
                 //setstate to reverse
                 break;
+
             case GROUNDALGAE:
                 if(true){ // NO GAMEPIECE
                 };
                 break;
+
             case NET:
                 if(true){ //HAVE ALGAE
 
                 }
 
-               case PREPCLIMB:
-             if(true){
-                //move elevator down 
-                //activate the servo motors
-                //close the switches
-                //stall the motor
-                //move wrist 
-                wantedState = States.PULLCLIMB;
-            }
-
-            case PULLCLIMB:
-           
+              
             
  
-
-
-    case PREPCLIMB:
-                //Stalled motor
-                //sswi
-                break;   
+            case PREPCLIMB:
+                if(true){
+                   //move elevator down 
+                   //activate the servo motors
+                   //close the switches
+                   //stall the motor
+                   //move wrist 
+                   wantedState = States.PULLCLIMB;
+               }
+   
             case PULLCLIMB:
-                //move elevator down
-                //move wrist up
-                //stop coral rollers
- else{
                     //go to eject
                 break;
+
             case PROCESSOR:
                 if(true){
                     //HAVE ALGAE
                 } else{
                     //go to eject
                 }
+
             case REEFALGAE:
                 if(true){
                     // NO GAMEPIECE
                 }
                 
-                
             case HOLDALGAE:
                 if(true){
                     //HAVE ALGAE
-                }else if(true){
+                } else if(true){
                     //needs driver input
                     //go to drop
-                }else if(true){
+                } else if(true){
                     //needs driver input
                     //go to net
                 } else if(true){
                     //needs driver input
                     //go to processor
                 }
-                    
+                
             case EJECTALGAE:
                 if(true){
                     //have Algae
                 }
-
         }
     }
 }
