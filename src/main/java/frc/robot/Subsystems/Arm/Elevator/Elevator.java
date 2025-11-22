@@ -1,7 +1,10 @@
 package frc.robot.Subsystems.Arm.Elevator;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Subsystems.Arm.ArmState.ArmPositions;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.spark.ClosedLoopSlot;
@@ -21,7 +24,6 @@ public class Elevator extends SubsystemBase{
 
     private final double maxacceleration=1;
 
-    //working here rui
 
     public Elevator(){
         current_instance = this;
@@ -39,8 +41,7 @@ public class Elevator extends SubsystemBase{
     }
 
     public void SetState(ElevatorStates state) {
-        if (state.position < 0)
-            state.position = 0;
+        if (state.position < 0){state.position = 0;}
 
         io.GetRightMotor()
             .getClosedLoopController()
@@ -50,6 +51,10 @@ public class Elevator extends SubsystemBase{
             .getClosedLoopController()
             .setReference(state.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, io.getFeedForward());
     
+    }
+
+    public boolean isAtPosition(ArmPositions armPos){
+        return MathUtil.isNear(armPos.elevatorPosition, io.GetPosition(),0.05);
     }
 }
 

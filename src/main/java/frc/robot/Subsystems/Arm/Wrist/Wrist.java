@@ -3,6 +3,9 @@ package frc.robot.Subsystems.Arm.Wrist;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 
+import edu.wpi.first.math.MathUtil;
+import frc.robot.Subsystems.Arm.ArmState.ArmPositions;
+
 public class Wrist {
 
     private static Wrist current_instance = null;
@@ -31,7 +34,10 @@ public class Wrist {
         io.getWristMotor()
             .getClosedLoopController()
             .setReference(state.wristPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0, io.getFeedForward());
-    
+    }
+
+    public boolean isAtPosition(ArmPositions armPos){
+        return MathUtil.isNear(armPos.wristPosition, io.getPosition(),0.05);
     }
 
 }
