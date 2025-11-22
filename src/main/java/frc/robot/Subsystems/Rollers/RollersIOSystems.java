@@ -35,7 +35,6 @@ public class RollersIOSystems implements RollersIO {
         clawFrontSensor.getConfigurator().apply(configuration);
     }
 
-    @Override
     public void updateInputs(RollersIOInputs inputs) {
         inputs.velocityRPM = motor.getEncoder().getVelocity();
         inputs.appliedVolts = motor.getAppliedOutput() * motor.getBusVoltage();
