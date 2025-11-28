@@ -16,13 +16,12 @@ public class Elevator extends SubsystemBase{
 
     private double wantedPosition = 0;
 
-    private double currentTrapzoidalSetpoint = 0;
-
-    public ElevatorIO io = new ElevatorIO();
+    public ElevatorIO io = new ElevatorIOSparkmax();
 
     private final double maxspeed=1;
 
     private final double maxacceleration=1;
+    private final double feedForward = 10;
 
 
     public Elevator(){
@@ -53,8 +52,8 @@ public class Elevator extends SubsystemBase{
     
     }
 
-    public boolean isAtPosition(ArmPositions armPos){
-        return MathUtil.isNear(armPos.elevatorPosition, io.GetPosition(),0.05);
+    public boolean isAtPosition(ArmPositions armPos, double tolerance){
+        return MathUtil.isNear(armPos.elevatorPosition, io.GetPosition(),tolerance);
     }
 }
 

@@ -2,31 +2,50 @@ package frc.robot.Subsystems.Arm;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.MathUtil;
+import com.revrobotics.spark.ClosedLoopSlot;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Subsystems.Arm.ArmState.ArmPositions;
 import frc.robot.Subsystems.Arm.ArmState.ArmStates;
 import frc.robot.Subsystems.Arm.Elevator.Elevator;
+import frc.robot.Subsystems.Arm.Elevator.ElevatorIO;
+import frc.robot.Subsystems.Arm.Elevator.ElevatorIOInputsAutoLogged;
 import frc.robot.Subsystems.Arm.Wrist.Wrist;
+import frc.robot.Subsystems.Arm.Wrist.WristIO;
+import frc.robot.Subsystems.Arm.Wrist.WristIOInputsAutoLogged;
 import frc.robot.Subsystems.Vision.AllignVision;
 import frc.robot.Subsystems.Vision.VisionConstants;
-import frc.robot.Subsystems.Arm.ArmState;
 
 public class Arm extends SubsystemBase{
     public ArmStates currentArmState = ArmStates.IDLE;
     public ArmStates wantedArmState = ArmStates.IDLE;
     public ArmPositions wantedPosition = ArmPositions.SAFE;
+    public WristIOInputsAutoLogged wristInputs = new WristIOInputsAutoLogged();
+    public final ElevatorIO eIO;
+    public final WristIO wIO;
+    public final ElevatorIOInputsAutoLogged elevatiorIOInputs = new ElevatorIOInputsAutoLogged();
+    public final WristIOInputsAutoLogged wristIOInputs = new WristIOInputsAutoLogged(); // not finished
     private Elevator elevator = Elevator.GetInstance();
     private Wrist wrist = Wrist.getInstance();
     
-    public Arm(){
-        
+    private static Arm instance = null;
+
+    public Arm(ElevatorIO eIO, WristIO wIO){
+        this.eIO = eIO;
+        this.wIO = wIO;
+        instance = this;
+    }
+
+    public static Arm getInstance(){
+        return instance;
     }
 
     @Override
     public void periodic() {
         // #1 Logging
-        Logger.processInputs();
+        // this.elevator.io.updateInputs(this.elevatiorIOInputs);
+        Logger.processInputs("Elevator", this.elevatiorIOInputs);
+        Logger.processInputs("Wrist", this.wristIOInputs);
 
         // #2 Handling Wanted State
         handleStateTransitions();
@@ -38,9 +57,9 @@ public class Arm extends SubsystemBase{
     public void handleStateTransitions() {
         if(this.wantedArmState == ArmStates.MANUAL){
             this.currentArmState = ArmStates.MANUAL;
-        }else if(this.currentArmState == ArmStates.IDLE && !this.stateInTolerance(0.1)){ //if current position is not equal to wanted position
+        }else if(this.currentArmState == ArmStates.IDLE && !this.positionInTolerance(0.1)){ //if current position is not equal to wanted position
             this.currentArmState = ArmStates.MOVING;
-        }else if(this.currentArmState == ArmStates.MOVING && this.stateInTolerance(0.05)){
+        }else if(this.currentArmState == ArmStates.MOVING && this.positionInTolerance(0.05)){
             this.currentArmState = ArmStates.IDLE;
         }
             
@@ -49,34 +68,22 @@ public class Arm extends SubsystemBase{
         
 
     public double GetWristPosition() {
-        return this.wrist.io.GetPosition();
+        return this.wrist.io.getPosition();
     }
 
 
     public double GetElevatorPosition() {
-        return this.elevator.GetInstance().io.GetPosition();
+        return this.elevator.io.GetPosition();
     }
     public void SetElevatorWantedPosition() {
-        this.elevator.GetInstance().SetPosition(this.currentArmState.elevatorPosition);
+        this.elevator.SetPosition(this.wantedPosition.elevatorPosition);
     }
 
 
 
-    public boolean stateInTolerance (double tolerance) {
-        //ArmStates current_arm_state = getCurrent
-        //ArmStates 
-        
-        //double t1=0;
-        //dob
-        //if(tolerance=>t1 && tolerance=<t2){
-        //if(tolerance=>t1 && tolerance=<t2){
-            //return true//more code
-            
-        //} else{
-        //return false;    
-        //}
+    public boolean positionInTolerance (double tolerance) {
+        return elevator.isAtPosition(wantedPosition, tolerance) && wrist.isAtPosition(wantedPosition, tolerance);
     }
-
 
 
     public void applyStates(){
@@ -92,86 +99,95 @@ public class Arm extends SubsystemBase{
         }
         
     }
+    //
+
     public void safeArmMovement(){
-        Elevator elevatorObj = Elevator.GetInstance();
-        if(
-            (
-                AllignVision.getInstance().io.getAverageLidarDistance() <= VisionConstants.alignPlaceDistance
-                &&
-                (
-                    (
-                        this.wantedPosition == ArmPositions.L1
-                        &&
-                        !elevatorObj.isAtPosition(this.wantedPosition)
-                    )
-                    ||
-                    (
-                        this.wantedPosition == ArmPositions.L4
-                        &&
-                        !elevatorObj.isAtPosition(this.wantedPosition)
-                    )
-                    ||
-                    (
-                        this.wantedPosition == ArmPositions.REEF_ALGAE_HIGH 
-                        &&
-                        (AllignVision.getInstance().io.getAverageLidarDistance() <= VisionConstants.alignDealagaeDistance)
-                    )
-                    ||
-                    (
-                        this.wantedPosition == ArmPositions.REEF_ALGAE_LOW
-                        &&
-                        (AllignVision.getInstance().io.getAverageLidarDistance() <= VisionConstants.alignDealagaeDistance))
-                    ||
-                    (
-                        this.wantedPosition == ArmPositions.INTAKE_CORAL
-                        &&
-                        (AllignVision.getInstance().io.getAverageLidarDistance() <= VisionConstants.alignSafeIntake)
-                    )
-                )
-                &&
-                !Wrist.getInstance().isAtPosition(ArmPositions.SAFE)
-            )
-        ){
-            Elevator.GetInstance().io.SetPosition(Elevator.GetInstance().io.GetPosition());
-        }
-        else if (
-            wrist.io.getPosition() > VisionConstants.minSafeWristAngle
-            &&
-            (AllignVision.getInstance().io.getAverageLidarDistance() <= VisionConstants.alignDealagaeDistance)
-            && 
+        if ( // if elevator is moving past crossbar and wrist and wantedposition are also
             (
                 (
-                    elevator.io.GetPosition() < VisionConstants.minElevatoDangerrange
+                    elevator.io.GetPosition() < VisionConstants.minElevatorDangerRange
                     &&
-                    wantedPosition.elevatorPosition < VisionConstants.minElevatoDangerrange
+                    wantedPosition.elevatorPosition < VisionConstants.minElevatorDangerRange
                 )
                 ||
                 (
-                    wantedPosition.elevatorPosition > VisionConstants.maxElevatoDangerrange 
+                    wantedPosition.elevatorPosition > VisionConstants.maxElevatorDangerRange 
                     &&
-                    elevator.io.GetPosition() > VisionConstants.maxElevatoDangerrange
+                    elevator.io.GetPosition() > VisionConstants.maxElevatorDangerRange
                 )
             )
-        ){
-            
-        }
-        else{
-            
-        }
-        /* OLD CODE
-        boolean passingHorizon = (wrist.getPosition() > wrist.getHorizonAngle() && wantedPosition.wristPosition < wrist.getHorizonAngle())
-        boolean inHorizonZone = !(Math.abs(wrist.getPosition()-wrist.getHorizonAngle()) < 0.1 && Math.abs(wantedPosition.wristPosition) < 0.1);
-        //boolean backedOffReef = (vision.getLeftLidarDistance() > 0.2 || vision.getRightLidarDistance() > 0.2);
-        if(backedOffReef || (!passingHorizon || !inHorizonZone))
+            &&
+            this.wrist.io.getPosition() > VisionConstants.maxWristDangerRange
+            &&
+            this.wantedPosition.wristPosition > VisionConstants.maxWristDangerRange
+        )
         {
-              // only let the wrist got to intake when elvator is at L1
-              if(wantedState == WristStates.INTAKE && this.elevator.getPosition() < Elevator.BOT_CROSSBAR_POS) {
-                  this.wrist.setState(wantedState, slot);
-              }
-              else {
-                  this.wrist.setState(wantedState, slot);
+            if ( // will wrist hit the reef when getting to wanted position or is the elevator in its final position
+                (
+                    (
+                        (
+                            this.wantedPosition.wristPosition > VisionConstants.wristDangerOfHittingReefMax
+                            &&
+                            this.wrist.io.getPosition() > VisionConstants.wristDangerOfHittingReefMax
+                        )
+                        ||
+                        (
+                            this.wantedPosition.wristPosition < VisionConstants.wristDangerOfHittingReefMin
+                            &&
+                            this.wrist.io.getPosition() < VisionConstants.wristDangerOfHittingReefMin
+                        )
+                    )
+                    &&
+                    (
+                        AllignVision.getInstance().io.getAverageLidarDistance() > VisionConstants.wristsSafeDistanceFromReef
+                        ||
+                        (
+                            wantedPosition != ArmPositions.SUPERCYCLE_ALGAE_HIGH
+                            ||
+                            wantedPosition != ArmPositions.SUPERCYCLE_ALGAE_LOW
+                            
+                        )
+                    )
+                )
+                ||
+                (
+                    this.elevator.isAtPosition(wantedPosition,0.1)
+                    &&
+                    this.wantedPosition != ArmPositions.L1
+                )
+            ){
+                
+                if(this.wantedPosition != ArmPositions.L4 || this.elevator.isAtPosition(wantedPosition, 0.1)){ // prevents L4 wrist from moving down unless elevator is all the way up
+                    this.wrist.io.setPosition(wantedPosition.wristPosition, ClosedLoopSlot.kSlot0); //no idea what K slot to put it on
+                    this.elevator.SetPosition(this.elevator.io.GetPosition());
+                }else{ 
+                    this.wrist.io.setPosition(ArmPositions.SAFE.wristPosition, ClosedLoopSlot.kSlot0); //no idea what K slot to put it on
+                    if(this.wrist.isAtPosition(ArmPositions.SAFE,0.1)){
+                        this.elevator.io.SetPosition(wantedPosition.elevatorPosition);
+                    }else{
+                        this.elevator.SetPosition(this.elevator.io.GetPosition());
+                }
+                }
+            }
+            else if(this.wantedPosition.wristPosition > VisionConstants.wristDangerOfHittingReefMin && this.wrist.io.getPosition() > VisionConstants.wristDangerOfHittingReefMax) { //is the wrist not going from below
+                this.wrist.io.setPosition(ArmPositions.SAFE.wristPosition, ClosedLoopSlot.kSlot0); //no idea what K slot to put it on
+                if(this.wrist.isAtPosition(ArmPositions.SAFE,0.1)){
+                    this.elevator.io.SetPosition(wantedPosition.elevatorPosition);
+                }else{
+                    this.elevator.SetPosition(this.elevator.io.GetPosition());
+                }
+            }
+            else{
+                this.wrist.io.setPosition(ArmPositions.INTAKE_CORAL.wristPosition, ClosedLoopSlot.kSlot0); //no idea what K slot to put it on
             }
         }
-        */
+        else if(AllignVision.getInstance().io.getAverageLidarDistance() <= VisionConstants.wristsSafeDistanceFromReef && this.wrist.io.getPosition() > VisionConstants.wristDangerOfHittingReefMax){
+            this.elevator.SetPosition(this.elevator.io.GetPosition());
+            this.wrist.io.setPosition(ArmPositions.SAFE.wristPosition, ClosedLoopSlot.kSlot0); //no idea what K slot to put it on
+        }
+        else{
+            this.elevator.SetPosition(this.elevator.io.GetPosition());
+            //wait for robot to back up(not done here)
+        }
     }
 }

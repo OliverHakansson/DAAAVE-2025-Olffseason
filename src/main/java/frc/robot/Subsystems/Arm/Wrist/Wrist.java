@@ -36,8 +36,8 @@ public class Wrist {
             .setReference(state.wristPosition, ControlType.kPosition, ClosedLoopSlot.kSlot0, io.getFeedForward());
     }
 
-    public boolean isAtPosition(ArmPositions armPos){
-        return MathUtil.isNear(armPos.wristPosition, io.getPosition(),0.05);
+    public boolean isAtPosition(ArmPositions armPos, double tolerance){
+        return MathUtil.isNear(armPos.wristPosition, io.getPosition(),tolerance);
     }
 
 }

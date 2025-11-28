@@ -7,6 +7,9 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import frc.robot.Subsystems.Arm.Arm;
+
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
@@ -21,6 +24,7 @@ public class ElevatorIOSparkmax implements ElevatorIO{
     private double feedForward = 0.0; //TODO set
     
     public Elevator elevator;
+    public Arm arm;
 
 
     public ElevatorIOSparkmax(){
@@ -94,6 +98,10 @@ public class ElevatorIOSparkmax implements ElevatorIO{
         inputs.rightTemperature = rightMotor.getMotorTemperature();
         inputs.rightCurrentAmps = rightMotor.getOutputCurrent();
 
+        if (arm==null){
+            arm = Arm.getInstance();
+        }
+        inputs.elevatorWantedPosition = arm.wantedPosition.elevatorPosition;
         // inputs.elevatorTargetState = elevator.getTargetState();
     }
 

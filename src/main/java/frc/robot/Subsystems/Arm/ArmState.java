@@ -1,4 +1,4 @@
-package frc.robot.Subsystems.Arm.ArmState;
+package frc.robot.Subsystems.Arm;
 
 public class ArmState{
     public enum ArmStates {

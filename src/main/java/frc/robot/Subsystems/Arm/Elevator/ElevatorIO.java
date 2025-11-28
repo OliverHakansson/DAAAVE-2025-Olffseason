@@ -19,8 +19,10 @@ public interface ElevatorIO {
     public double rightAppliedVolts = 0.0;
     public double rightCurrentAmps = 0.0;
     public double rightTemperature = 0.0;
-    public ElevatorStates elevatorTargetState;
+
+    public double elevatorWantedPosition = 0.0;
   }
+  public default double getFeedForward(){return 0;}
 
   public default void UpdateInputs(ElevatorIOInputs inputs) {}
 
