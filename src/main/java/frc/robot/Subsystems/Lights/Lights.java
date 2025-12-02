@@ -20,14 +20,12 @@ import org.littletonrobotics.junction.Logger;
 
 
 public class Lights extends SubsystemBase {
-    private AnimationStates wantedAnimationState;
-    private AnimationStates currentAnimationState;
+    private LightStates lightState;
     public final LightsIO io;
     private static Lights instance = null;
     private final LightsIOInputsAutoLogged inputs = new LightsIOInputsAutoLogged();
 
     private CANdle candle;
-    private AnimationStates lastAnimation;
     private static Lights light;    
 
 
@@ -43,26 +41,17 @@ public class Lights extends SubsystemBase {
 
     public Lights() {
         this.candle = new CANdle(19);
+        this.lightState = LightStates.IDLE;
     }
     
-    public void setAnimation(AnimationStates animation) {
-        if (animation.time == 0) {
-            configAnimation(animation);
-            return;
-        }
-        this.currentAnimationState = animation;
+    public void setLightState(LightStates state) {
+        candle.animate(state.animation);
     }
 
-    public void setAnimation(AnimationStates[] animations) {
-        for (AnimationStates animation : animations) {
-            setAnimation(animation);
+    public void setLightState(LightStates[] states) {
+        for (LightStates state : states) {
+            candle.animate(state.animation);
         }
-    }
-
-    private void configAnimation(AnimationStates animation) {
-        if (animation == lastAnimation) return;
-        candle.animate(animation.animation);
-        lastAnimation = animation;
     }
 
     int flag = 0;
@@ -72,40 +61,11 @@ public class Lights extends SubsystemBase {
 
 
 
-    public void handleStateTransitions() {
-        switch (wantedAnimationState) {
-            default:
-                this.currentAnimationState = AnimationStates.IDLE;
-                break;
-            case CORAL_L4:
-                this.currentAnimationState = AnimationStates.CORAL_L4;
-                break;
-        }
-    }
-
-    public void applyStates() {
-        this.setState(currentLightState);
-    }
-
-    public void setState(LightStates currentLightState){
-
-    }
-
-
-    public void setState(LightStates currentLightState){
-
-    }
-
-
 
 
 
     @Override
     public void periodic() {
         io.updateInputs(inputs);
-
-        handleStateTransitions();
-
-        applyStates();
     }
 }
