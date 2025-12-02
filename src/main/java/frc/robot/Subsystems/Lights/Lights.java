@@ -23,8 +23,8 @@ public class Lights extends SubsystemBase {
     private AnimationStates wantedAnimationState;
     private AnimationStates currentAnimationState;
     public final LightsIO io;
-    private static Lights instance;
-    private final RollersIOInputsAutoLogged inputs = new RollersIOInputsAutoLogged();
+    private static Lights instance = null;
+    private final LightsIOInputsAutoLogged inputs = new LightsIOInputsAutoLogged();
 
     private CANdle candle;
     private AnimationStates lastAnimation;
@@ -84,21 +84,18 @@ public class Lights extends SubsystemBase {
     }
 
     public void applyStates() {
-
-        switch (currentAnimationState) {
-            default:
-                this.setAnimation(currentAnimationState);
-                break;
-            case CORAL_L4:
-                this.setAnimation(currentAnimationState);
-                break;
-        }
-        
-        // start = Timer.getFPGATimestamp();
-        // configAnimation(AnimationStates.CORAL_L4);
-        // flag = 1;
-        // break;
+        this.setState(currentLightState);
     }
+
+    public void setState(LightStates currentLightState){
+
+    }
+
+
+    public void setState(LightStates currentLightState){
+
+    }
+
 
 
 
