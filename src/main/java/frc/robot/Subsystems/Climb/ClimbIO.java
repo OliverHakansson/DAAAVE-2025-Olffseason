@@ -19,7 +19,7 @@ public interface ClimbIO {
     /** Updates the set of loggable inputs. */
     public default void updateInputs(ClimbIOInputs inputs) {}
 
-    public default void setPosition(double newPosition, double doublerollerVoltage, ClosedLoopSlot slot) {}
+    public default void setPosition(double newPosition, double rollerVoltage,ClosedLoopSlot slot) {}
 
     public default double getPosition() {
         return 0;

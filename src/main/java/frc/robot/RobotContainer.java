@@ -11,9 +11,13 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Subsystems.Lights.Lights;
+import frc.robot.Subsystems.Lights.LightsIO;
 
 import java.util.Optional;
 import org.ironmaple.simulation.SimulatedArena;
+
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -35,7 +39,7 @@ public class RobotContainer {
     public RobotContainer() {
         switch (Constants.currentMode) {
             case REAL:
-
+                Lights.setInstance(new LightsIO(){});
                 break;
 
             case SIM:

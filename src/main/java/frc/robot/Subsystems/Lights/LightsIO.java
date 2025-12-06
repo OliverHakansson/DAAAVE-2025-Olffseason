@@ -1,27 +1,27 @@
-// package frc.robot.Subsystems.Lights;
+package frc.robot.Subsystems.Lights;
 
-// import org.littletonrobotics.junction.AutoLog;
-// import com.ctre.phoenix.led.CANdle;
+import org.littletonrobotics.junction.AutoLog;
+import com.ctre.phoenix.led.CANdle;
 
-// public interface LightsIO {
-//     @AutoLog
-//     public static class LightsIOInputs {
-//         AnimationStates animationState;
-//     }
+public interface LightsIO {
+    @AutoLog
+    public static class LightsIOInputs {
+        LightStates animationState;
+    }
 
-//     public default void setAnimation(AnimationStates animations) {}
+    public default void setAnimation(LightStates animations) {}
 
-//     public default void setAnimation(AnimationStates[] animations) {}
+    public default void setAnimation(LightStates[] animations) {}
 
-//     public default void updateInputs(LightsIOInputs inputs) {}
+    public default void updateInputs(LightsIOInputs inputs) {}
 
-//     public default void playAnimation(){}
+    public default void playAnimation(){}
 
-//     public default AnimationStates getAnimation() {
-//         return AnimationStates.DEFAULT;
-//     }
+    public default LightStates getAnimation() {
+        return LightStates.IDLE;
+    }
 
-//     public default void updateSim() {}
+    public default void updateSim() {}
 
-//     public default CANdle getcandle() {return null;}
-// }
+    public default CANdle getcandle() {return null;}
+}

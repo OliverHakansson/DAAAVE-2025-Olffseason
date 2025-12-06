@@ -5,9 +5,10 @@ import frc.robot.Subsystems.Lights.LightStates;
 import frc.robot.Subsystems.Lights.Lights;
 
 public class Superstructure extends SubsystemBase{
+    public static Lights light = Lights.getInstance();
+
     public States currentState;
     public States wantedState;
-    public Lights light = new Lights();
 
     public Superstructure(){ // add subsystems
         //beep

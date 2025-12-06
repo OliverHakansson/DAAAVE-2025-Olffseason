@@ -2,6 +2,7 @@ package frc.robot.Subsystems.Rollers;
 
 import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveRequest.Idle;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Subsystems.Arm.Elevator.ElevatorStates;
 

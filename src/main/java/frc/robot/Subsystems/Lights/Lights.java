@@ -21,7 +21,7 @@ import org.littletonrobotics.junction.Logger;
 
 public class Lights extends SubsystemBase {
     private LightStates lightState;
-    // public final LightsIO io;
+    public final LightsIO io;
     private static Lights instance = null;
     // private final LightsIOInputsAutoLogged inputs = new LightsIOInputsAutoLogged();
 
@@ -33,13 +33,18 @@ public class Lights extends SubsystemBase {
 
     public static Lights getInstance() {
         if (light == null) {
-            light = new Lights();
+          throw new IllegalStateException("CoralRollers instance not set");
         }
         return light;
     }
 
+    public static Lights setInstance(LightsIO io) {
+      instance = new Lights(io);
+      return instance;
+    }
 
-    public Lights() {
+    public Lights(LightsIO io) {
+        this.io = io;
         this.candle = new CANdle(19);
         this.lightState = LightStates.IDLE;
     }
