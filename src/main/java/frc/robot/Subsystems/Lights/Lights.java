@@ -33,7 +33,7 @@ public class Lights extends SubsystemBase {
 
     public static Lights getInstance() {
         if (light == null) {
-          throw new IllegalStateException("CoralRollers instance not set");
+          return setInstance(new LightsIOSystem());
         }
         return light;
     }

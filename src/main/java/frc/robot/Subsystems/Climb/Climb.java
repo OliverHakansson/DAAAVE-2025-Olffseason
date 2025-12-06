@@ -18,7 +18,7 @@ public class Climb extends SubsystemBase {
 
     public static Climb getInstance() {
         if (instance == null) {
-            throw new IllegalStateException("Climb instance not set");
+            return setInstance(new ClimbIOSystems());
         }
         return instance;
     }

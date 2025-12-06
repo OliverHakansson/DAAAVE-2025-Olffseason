@@ -13,6 +13,8 @@ import frc.robot.Subsystems.Arm.Elevator.ElevatorIOInputsAutoLogged;
 import frc.robot.Subsystems.Arm.Wrist.Wrist;
 import frc.robot.Subsystems.Arm.Wrist.WristIO;
 import frc.robot.Subsystems.Arm.Wrist.WristIOInputsAutoLogged;
+import frc.robot.Subsystems.Lights.Lights;
+import frc.robot.Subsystems.Lights.LightsIO;
 import frc.robot.Subsystems.Vision.AllignVision;
 import frc.robot.Subsystems.Vision.VisionConstants;
 
@@ -21,23 +23,28 @@ public class Arm extends SubsystemBase{
     public ArmStates wantedArmState = ArmStates.IDLE;
     public ArmPositions wantedPosition = ArmPositions.SAFE;
     public WristIOInputsAutoLogged wristInputs = new WristIOInputsAutoLogged();
-    public final ElevatorIO eIO;
-    public final WristIO wIO;
     public final ElevatorIOInputsAutoLogged elevatiorIOInputs = new ElevatorIOInputsAutoLogged();
     public final WristIOInputsAutoLogged wristIOInputs = new WristIOInputsAutoLogged(); // not finished
-    private Elevator elevator = Elevator.GetInstance();
-    private Wrist wrist = Wrist.getInstance();
+    private Elevator elevator;
+    private Wrist wrist;
     
     private static Arm instance = null;
 
-    public Arm(ElevatorIO eIO, WristIO wIO){
-        this.eIO = eIO;
-        this.wIO = wIO;
-        instance = this;
+    public Arm(Elevator elevator, Wrist wrist){
+        this.elevator = elevator;
+        this.wrist = wrist;
     }
 
-    public static Arm getInstance(){
+    public static Arm getInstance() {
+        if(instance == null) {
+            return setInstance(Elevator.GetInstance(), Wrist.getInstance());
+        }
         return instance;
+    }
+
+    public static Arm setInstance(Elevator elevator, Wrist wrist) {
+      instance = new Arm(elevator, wrist);
+      return instance;
     }
 
     @Override

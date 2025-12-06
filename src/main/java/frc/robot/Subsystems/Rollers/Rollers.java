@@ -22,7 +22,7 @@ public class Rollers extends SubsystemBase{
 
     public static Rollers getInstance() {
         if (instance == null) {
-          throw new IllegalStateException("CoralRollers instance not set");
+          return setInstance(new RollersIOSystems());
         }
         return instance;
       }
