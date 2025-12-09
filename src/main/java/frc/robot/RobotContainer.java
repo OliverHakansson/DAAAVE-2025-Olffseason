@@ -4,20 +4,14 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Subsystems.Lights.Lights;
 import frc.robot.Subsystems.Lights.LightsIO;
-
-import java.util.Optional;
-import org.ironmaple.simulation.SimulatedArena;
-
-
+import frc.robot.Subsystems.DriveSubsystem;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -26,43 +20,66 @@ import org.ironmaple.simulation.SimulatedArena;
  * the {@link Robot}
  * periodic methods (other than the scheduler calls). Instead, the structure of
  * the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
+ * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    private final SendableChooser<Command> autoChooser;
+  // The robot's subsystems and commands are defined here...
+  public final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 
-    // The robot's subsystems and commands are defined here...
+  private final CommandJoystick m_joystick = ControlMap.DRIVER_LEFT;
 
-    /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
-     */
-    public RobotContainer() {
-        switch (Constants.currentMode) {
-            case REAL:
-                Lights.setInstance(new LightsIO(){});
-                break;
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
+  public RobotContainer() {
+                switch (Constants.currentMode) {
+                    case REAL:
+                        Lights.setInstance(new LightsIO(){});
+                        break;
+        
+                    case SIM:
+        
+                        break;
+                    default:
+                        break;
+                }
+              
+    
 
-            case SIM:
+    // Configure the button bindings
+    configureButtonBindings();
+  }
 
-                break;
-            default:
-                break;
-        }
+  /**
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by
+   * instantiating a {@link GenericHID} or one of its subclasses ({@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+   * it to a {@link
+   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   */
+  private void configureButtonBindings() {
+    /* If the upper left shoulder button is pressed, drive straight */
+    m_joystick.axisGreaterThan(0, 1).whileTrue(
+      new DriveStraightCommand(m_driveSubsystem, () -> -m_joystick.getY())
+    );
+  }
 
-        autoChooser = AutoBuilder.buildAutoChooser();
-        //NAMED COMMANDS IN SWERVE
-        SmartDashboard.putData("Autonomous Path", autoChooser);
-        // VisionSubsystem.getInstance();
-        ButtonConfig buttons = new ButtonConfig();
-        buttons.initTeleop();
-    }
-
-    /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
-    public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
-    }
+  public void drive () {
+    m_driveSubsystem.setDefaultCommand(
+      m_driveSubsystem.run(() ->
+        /* invert the joystick Y because forward Y is negative */
+        m_driveSubsystem.arcadeDrive(-m_joystick.getY(), m_joystick.getX()/100)
+      )
+    );
+  }
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand() {
+    // An ExampleCommand will run in autonomous
+    return null;
+  }
 }
