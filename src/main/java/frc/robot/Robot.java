@@ -12,6 +12,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.Swerve;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -24,6 +25,7 @@ public class Robot extends LoggedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private RobotContainer robotContainer;
+  private Swerve swerve;
 
   /**
    * This function is run when the robot is first started up and should be used for any

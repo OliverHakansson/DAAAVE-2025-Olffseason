@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Subsystems.Lights.Lights;
 import frc.robot.Subsystems.Lights.LightsIO;
+import frc.robot.Swerve.Swerve;
+import frc.robot.Swerve.SwerveIOSystem;
 import frc.robot.Subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -26,7 +28,9 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 
-  private final CommandJoystick m_joystick = ControlMap.DRIVER_LEFT;
+  private final CommandJoystick DRIVER_LEFT = ControlMap.DRIVER_LEFT;
+  private final CommandJoystick DRIVER_RIGHT = ControlMap.DRIVER_RIGHT;
+  private Swerve swerve;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -43,6 +47,8 @@ public class RobotContainer {
                     default:
                         break;
                 }
+                Swerve.setInstance(new SwerveIOSystem());
+                swerve = Swerve.getInstance();
               
     
 
@@ -60,18 +66,22 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     /* If the upper left shoulder button is pressed, drive straight */
-    m_joystick.axisGreaterThan(0, 1).whileTrue(
-      new DriveStraightCommand(m_driveSubsystem, () -> -m_joystick.getY())
-    );
+    // m_joystick.axisGreaterThan(0, 1).whileTrue(
+    //   new DriveStraightCommand(m_driveSubsystem, () -> -m_joystick.getY())
+    // );
   }
 
   public void drive () {
-    m_driveSubsystem.setDefaultCommand(
-      m_driveSubsystem.run(() ->
-        /* invert the joystick Y because forward Y is negative */
-        m_driveSubsystem.arcadeDrive(-m_joystick.getY(), m_joystick.getX()/100)
-      )
-    );
+    // m_driveSubsystem.setDefaultCommand(
+    //   m_driveSubsystem.run(() ->
+    //     /* invert the joystick Y because forward Y is negative */
+    //     m_driveSubsystem.arcadeDrive(-m_joystick.getY(), m_joystick.getX()/100)
+    //   )
+    // );
+
+    swerve.driveCommand(
+      () -> DRIVER_LEFT.getX(), () -> DRIVER_LEFT.getY(), () -> DRIVER_RIGHT.getX()
+    );//DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
