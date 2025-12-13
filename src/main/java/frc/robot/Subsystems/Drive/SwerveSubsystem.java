@@ -1,6 +1,7 @@
 package frc.robot.Subsystems.Drive;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveModule;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -8,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.Constants;
 import frc.robot.FieldConstants;
+import frc.robot.Subsystems.Rollers.Rollers;
+import frc.robot.Subsystems.Rollers.RollersIO;
 
 
 
@@ -19,15 +22,16 @@ public class SwerveSubsystem extends SubsystemBase{
         REVERSE,
         ALIGN
     }
-        SystemState wantedState;
-        SystemState systemState;
-        public SwerveIO io;
-        public CommandJoystick driverLeft;
-        public CommandJoystick driverRight;
-        public double maxVelocity;
-        public double maxAngularVelocity;
+    private static SwerveSubsystem instance;
+    public SystemState wantedState;
+    public SystemState systemState;
+    public SwerveIO io;
+    public CommandJoystick driverLeft;
+    public CommandJoystick driverRight;
+    public double maxVelocity;
+    public double maxAngularVelocity;
 
-        final SwerveIOInputsAutoLogged swerveInputs = new SwerveIOInputsAutoLogged();
+    final SwerveIOInputsAutoLogged swerveInputs = new SwerveIOInputsAutoLogged();
 
     public SwerveSubsystem(
         SwerveIO io, CommandJoystick driverLeft, CommandJoystick driverRight, double maxAngularVelocity, double maxVelocity
@@ -38,6 +42,17 @@ public class SwerveSubsystem extends SubsystemBase{
         this.maxAngularVelocity = maxAngularVelocity;
         this.maxVelocity = maxVelocity;
 
+    }
+
+    public static SwerveSubsystem getInstance() {
+        if(instance == null)
+            throw new IllegalStateException("Swerve instance not set");
+        else
+            return instance;
+    }
+
+    public static SwerveSubsystem setInstance(SwerveIO io, CommandJoystick driverLeft, CommandJoystick driverRight, double maxAngularVelocity, double maxVelocity) {
+        return instance = new SwerveSubsystem(io,driverLeft,driverRight,maxAngularVelocity,maxVelocity);
     }
 
     @Override
@@ -89,7 +104,7 @@ public class SwerveSubsystem extends SubsystemBase{
 
         }
     }
-    public void calculateSpeedsBasedOnJoystickInputs(){
+    public ChassisSpeeds calculateSpeedsBasedOnJoystickInputs(){
         double yMagnitude = MathUtil.applyDeadband(driverLeft.getRawAxis(1), Constants.leftYDeadband);
         double xMagnitude = MathUtil.applyDeadband(driverLeft.getRawAxis(0), Constants.leftXDeadband);
         double angularMagnitude = MathUtil.applyDeadband(driverRight.getRawAxis(0), Constants.rightXDeadband);
@@ -101,12 +116,6 @@ public class SwerveSubsystem extends SubsystemBase{
 
         double angularVelocity = angularMagnitude * maxAngularVelocity * Constants.maxTelopAngularVelocity;
 
-        // could add a skew compensator
-        // Rotation2d skewCompensationFactor = Rotation2d.fromRadians(swerveInputs.Speeds.omegaRadiansPerSecond * SKEW_COMPENSATION_SCALAR);
-
-        return ChassisSpeeds.fromRobotRelativeSpeeds(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                        new ChassisSpeeds(xVelocity, yVelocity, -angularVelocity), swerveInputs.Pose.getRotation()),
-                swerveInputs.Pose.getRotation());//.plus(skewCompensationFactor));
+        return new ChassisSpeeds(xMagnitude, yMagnitude, angularVelocity);
     }
 }

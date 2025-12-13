@@ -1,42 +1,25 @@
-// Copyright 2021-2024 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
-
-import com.pathplanner.lib.config.PIDConstants;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.numbers.N4;
-import edu.wpi.first.wpilibj.RobotBase;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.wpi.first.wpilibj.RobotBase;
+
 /**
- * This class defines the runtime mode used by AdvantageKit. The mode is always
- * "real" when running
- * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics
- * sim) and "replay"
- * (log replay from a file).
+ * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants should be declared
+ * globally (i.e. public static). Do not put anything functional in this class.
+ *
+ * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    public static String CANBUS_NAME = "rio";
+
     public static final Mode simMode = Mode.SIM;
     public static final Mode realMode = Mode.REAL;
     public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
@@ -45,14 +28,6 @@ public final class Constants {
     public static int NUM_LEDS;
     public static double LOOP_TIME = 0.02;
     public static List<Double> intakeTimes = new ArrayList<>();
-    public static double maxVelocity = 1;
-    public static double maxAngularVelocity = 1;
-    public static double maxTelopVelocity = 1;
-    public static double maxTelopAngularVelocity = 1;
-    //temporary values
-    public static final double leftXDeadband = 0.07;
-    public static final double leftYDeadband = 0.07;
-    public static final double rightXDeadband = 0.07; 
 
     public static enum Mode {
         /** Running on a real robot. */
@@ -65,85 +40,36 @@ public final class Constants {
         REPLAY
     }
 
-    public static final class Swerve {
-        public static final PIDConstants translationConstants = new PIDConstants(3, 0.0, 0.0);
-        public static final PIDConstants rotationConstants = new PIDConstants(3, 0.0, 0.0);
-    }
+    /* Talon FX Device IDs */
+    public static final int LEFT_LEADER_ID = 1;
+    public static final int LEFT_FOLLOWER_ID = 2;
+    public static final int RIGHT_LEADER_ID = 3;
+    public static final int RIGHT_FOLLOWER_ID = 4;
 
-    public static class OperatorConstants {
-        // Joystick Deadband
-        public static final double LEFT_X_DEADBAND = 0.07;
-        public static final double LEFT_Y_DEADBAND = 0.07;
-        public static final double RIGHT_X_DEADBAND = 0.07;
-        public static final double TURN_CONSTANT = 6;
-        public static final int DRIVER_LEFT = 0;
-        public static final int DRIVER_RIGHT = 1;
-        public static final int DRIVER_BUTTONS = 2;
-        public static final int CO_DRIVER_LEFT = 3;
-        public static final int CO_DRIVER_RIGHT = 4;
-        public static final int CO_DRIVER_BUTTONS = 5;
-    }
+    /* Sensor IDs */
+    public static final int PIGEON2_ID = 1;
 
-    public static class VisionConstants {
-        public static final boolean USE_VISION = true;
-
-        // Transform Camera Coordinates to Robot Coordinates. Based on camera mounting
-        // position.
-        public static final Transform3d transformFrontLeftToRobot = new Transform3d(0.13, 0.31, 0.28,
-                new Rotation3d(0, 0, Math.toRadians(-25)));
-
-        public static final Transform3d transformFrontRightToRobot = new Transform3d(0.13, -0.31, 0.28,
-                new Rotation3d(0, 0, Math.toRadians(25)));
-
-        public static final Transform3d transformMiddleRightToRobot = new Transform3d(0.0762, -0.273, 0.609,
-                new Rotation3d(0, 0, Math.toRadians(-90)));
-
-        public static final Transform3d transformMiddleLeftToRobot = new Transform3d(0.0762, 0.273, 0.609,
-                new Rotation3d(0, 0, Math.toRadians(90)));
-
-        public static final Transform3d tranformCenterRobotToAlgaeCamera = new Transform3d(0.35,0.145,0.15,new Rotation3d(0,0,Math.toRadians(30))); //TODO - change this to the actual transform of the center of the robot to the camera.
-
-        public static final Transform3d transformBackToRobot = new Transform3d(0.0, 0.0, 1.0, new Rotation3d(0, 0, Math.toRadians(180)));
-
-        // Position of the AprilTag in Tag Coordinates.
-        public static final Matrix<N4, N1> referenceTagPosition = new Matrix<N4, N1>(VecBuilder.fill(0, 0, 0, 1));
-
-        // Constant Distance from Tag to Pole (6in in meters)
-        public static final double distanceToPole = 0.164;
-
-        // Max Depth Distance of Front Lidar from Tag (Meters)
-        public static final double maxFrontLidarDepthDistance = 0.22;
-
-        //Max Depth Distance of Front Lidar from Tag (Meters) while doing pre alignment
-        public static final double maxFrontLidarDepthDistancePreAlign = 0.6; //TODO
-
-        // Max Depth Distance of Back Lidar from Tag (Meters)
-        public static final double maxBackLidarDepthDistance = 0.55;
-
-        // Max Depth Distance of Camera from Tag (Meters)
-        public static final double maxBackCameraDepthDistance = -0.75;
-
-        // Max Depth Distance of Camera from Tag (Meters)
-        public static final double maxCameraDepthDistance = 0.575;
-
-        public static final double maxCameraDepthDistancePreAlgae =  1.1;
-        public static final double maxCameraDepthDistanceAlgae =  0.8;
-
-        // Lidar Turn Angle Baseline (Might Be Radians)
-        public static final double lidarTurnAngleBaseline = 0.605;
-
-        // List of tags that can be used for alignment
-        public static final List<Integer> validAlignTags = List.of(1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20,
-                21, 22);
-
-        // The layout of the AprilTags on the field
-        public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
-
-        // The standard deviations of our vision estimated poses, which affect
-        // correction rate
-        // (Fake values. Experiment and determine estimation noise on an actual robot.)
-        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
-
-    }
+    public static final double maxTelopVelocity = 1;//TODO
+    public static final double maxTelopAngularVelocity = 1;//TODO
+    public static final double leftYDeadband = 1;//TODO
+    public static final double leftXDeadband = 1;//TODO
+    public static final double rightXDeadband = 1;//TODO
+    public static final double maxAngularVelocity = 1;//TODO
+    // public static final enum currentMode = 1;//TODO
+    public static final double maxVelocity = 1;//TODO
+    // public static final double maxVelocity = 1;//TODO
+    // public static final double maxVelocity = 1;//TODO
+    // public static final double maxVelocity = 1;//TODO
+    // public static final double maxVelocity = 1;//TODO
+    // public static final double maxVelocity = 1;//TODO
+    // public static final double maxVelocity = 1;//TODO
+    // public static final double maxVelocity = 1;//TODO
+    // public static final double maxVelocity = 1;//TODO
+    // public static final double maxVelocity = 1;//TODO
+    // public static final double maxVelocity = 1;//TODO
+    // public static final double maxVelocity = 1;//TODO
+    // public static final double maxVelocity = 1;//TODO
+    // public static final double maxVelocity = 1;//TODO
+    // public static final double maxVelocity = 1;//TODO
+    
 }
