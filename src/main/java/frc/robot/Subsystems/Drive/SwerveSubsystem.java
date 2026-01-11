@@ -111,7 +111,7 @@ public class SwerveSubsystem extends SubsystemBase{
         angularMagnitude = Math.copySign(angularMagnitude * angularMagnitude, angularMagnitude);
         double xVelocity = (FieldConstants.isBlueAlliance() ? -xMagnitude * maxVelocity : xMagnitude * maxVelocity)
                 * Constants.maxTelopVelocity;
-        double yVelocity = (FieldConstants.isBlueAlliance() ? -yMagnitude * maxVelocity : yMagnitude * maxVelocity)
+        double yVelocity = (FieldConstants.isBlueAlliance() ? yMagnitude * maxVelocity : -yMagnitude * maxVelocity)
                 * Constants.maxTelopVelocity;
 
         double angularVelocity = angularMagnitude * maxAngularVelocity * Constants.maxTelopAngularVelocity;
