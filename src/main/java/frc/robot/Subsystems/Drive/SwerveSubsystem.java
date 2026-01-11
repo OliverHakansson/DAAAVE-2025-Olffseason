@@ -23,8 +23,8 @@ public class SwerveSubsystem extends SubsystemBase{
         ALIGN
     }
     private static SwerveSubsystem instance;
-    public SystemState wantedState;
-    public SystemState systemState;
+    public SystemState wantedState = SystemState.MANUAL;
+    public SystemState systemState = SystemState.IDLE;
     public SwerveIO io;
     public CommandJoystick driverLeft;
     public CommandJoystick driverRight;
@@ -85,7 +85,6 @@ public class SwerveSubsystem extends SubsystemBase{
                 io.setSwerveState(new SwerveRequest.ApplyFieldSpeeds()
                     .withSpeeds(calculateSpeedsBasedOnJoystickInputs())
                     .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage));
-                
                 break;
             case IDLE:
                 
@@ -94,7 +93,8 @@ public class SwerveSubsystem extends SubsystemBase{
                 
                 break;
             case REVERSE:
-                
+                io.setSwerveState(new SwerveRequest.ApplyFieldSpeeds().withSpeeds(new ChassisSpeeds(-0.3, 0, 0))
+                .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage));
                 break;
             case ALIGN:
                 
@@ -116,6 +116,6 @@ public class SwerveSubsystem extends SubsystemBase{
 
         double angularVelocity = angularMagnitude * maxAngularVelocity * Constants.maxTelopAngularVelocity;
 
-        return new ChassisSpeeds(xMagnitude, yMagnitude, angularVelocity);
+        return new ChassisSpeeds(xVelocity, yVelocity, angularVelocity);
     }
 }

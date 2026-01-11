@@ -51,9 +51,9 @@ public final class Constants {
 
     public static final double maxTelopVelocity = 1;//TODO
     public static final double maxTelopAngularVelocity = 1;//TODO
-    public static final double leftYDeadband = 1;//TODO
-    public static final double leftXDeadband = 1;//TODO
-    public static final double rightXDeadband = 1;//TODO
+    public static final double leftYDeadband = 0.05;//TODO
+    public static final double leftXDeadband = 0.05;//TODO
+    public static final double rightXDeadband = 0.05;//TODO
     public static final double maxAngularVelocity = 1;//TODO
     // public static final enum currentMode = 1;//TODO
     public static final double maxVelocity = 1;//TODO

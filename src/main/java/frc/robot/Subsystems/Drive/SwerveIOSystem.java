@@ -247,7 +247,9 @@ public class SwerveIOSystem extends TunerSwerveDrivetrain implements Subsystem, 
 
      public void registerTelemetryFunction(SwerveIOInputs inputs) {}
 
-     public void setSwerveState(SwerveRequest request) {}
+     public void setSwerveState(SwerveRequest request) {
+        this.setControl(request);
+     }
 
      public void resetRotation() {}
 
