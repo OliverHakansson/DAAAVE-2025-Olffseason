@@ -13,14 +13,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.Subsystems.Drive.SwerveSubsystem;
+import frc.robot.Subsystems.Drive.TunerConstants;
 import frc.robot.Subsystems.Drive.SwerveIO;
 import frc.robot.Subsystems.Drive.SwerveIOSystem;
-import frc.robot.Subsystems.Lights.Lights;
-import frc.robot.Subsystems.Lights.LightsIO;
-import frc.robot.generated.TunerConstants;
-
-
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -49,7 +44,6 @@ public class RobotContainer {
         this.swerveSubsystem = SwerveSubsystem.setInstance(TunerConstants.createDrivetrain(), driverLeft, driverRight, Constants.maxAngularVelocity, Constants.maxVelocity);
         switch (Constants.currentMode) {
             case REAL:
-                Lights.setInstance(new LightsIO(){});
                 break;
             case SIM:
                 break;
